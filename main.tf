@@ -2,9 +2,6 @@ variable "name" {
   description = "VPC name"
 }
 
-variable "subnet_name_prefix" {
-  description = "Prefix for subnets Name tag"
-}
 variable "environment" {
   description = "Environment name, e.g. \"prod, test, dev\""
 }
@@ -28,7 +25,7 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags {
-    Name        = "${var.name}"
+    Name        = "${var.name}-${var.environment}"
     Environment = "${var.environment}"
   }
 }
@@ -62,7 +59,7 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
 
   tags {
-    Name = "${var.subnet_name_prefix}-${format("private-%02d", count.index+1)}"
+    Name = "${var.name}-${format("private-%02d", count.index+1)}"
   }
 }
 
@@ -74,7 +71,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags {
-    Name = "${var.subnet_name_prefix}-${format("public-%02d", count.index+1)}"
+    Name = "${var.name}-${format("public-%02d", count.index+1)}"
   }
 }
 
@@ -86,7 +83,7 @@ resource "aws_subnet" "protected" {
   map_public_ip_on_launch = false
 
   tags {
-    Name = "${var.subnet_name_prefix}-${format("protected-%02d", count.index+1)}"
+    Name = "${var.name}-${format("protected-%02d", count.index+1)}"
   }
 }
 
