@@ -52,10 +52,11 @@ variable "region_az_count" {
 data "aws_availability_zones" "available" {}
 
 resource "aws_subnet" "private" {
-  vpc_id            = "${aws_vpc.main.id}"
-  cidr_block        = "${cidrsubnet(aws_vpc.main.cidr_block, 3, count.index * 2 + 0)}"
-  availability_zone = "${element(data.aws_availability_zones.available.names, count.index)}"
-  count             = "${lookup(var.region_az_count, var.region)}"
+  vpc_id                  = "${aws_vpc.main.id}"
+  cidr_block              = "${cidrsubnet(aws_vpc.main.cidr_block, 3, count.index * 2 + 0)}"
+  availability_zone       = "${element(data.aws_availability_zones.available.names, count.index)}"
+  count                   = "${lookup(var.region_az_count, var.region)}"
+  map_public_ip_on_launch = false
 
   tags {
     Name = "${var.name}-${format("private-%02d", count.index+1)}"
@@ -63,10 +64,10 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_subnet" "public" {
-  vpc_id            = "${aws_vpc.main.id}"
-  cidr_block        = "${cidrsubnet(aws_vpc.main.cidr_block, 4, count.index * 4 + 2)}"
-  availability_zone = "${element(data.aws_availability_zones.available.names, count.index)}"
-  count             = "${lookup(var.region_az_count, var.region)}"
+  vpc_id                  = "${aws_vpc.main.id}"
+  cidr_block              = "${cidrsubnet(aws_vpc.main.cidr_block, 4, count.index * 4 + 2)}"
+  availability_zone       = "${element(data.aws_availability_zones.available.names, count.index)}"
+  count                   = "${lookup(var.region_az_count, var.region)}"
   map_public_ip_on_launch = true
 
   tags {
@@ -75,15 +76,17 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_subnet" "protected" {
-  vpc_id            = "${aws_vpc.main.id}"
-  cidr_block        = "${cidrsubnet(aws_vpc.main.cidr_block, 5, count.index * 8 + 6)}"
-  availability_zone = "${element(data.aws_availability_zones.available.names, count.index)}"
-  count             = "${lookup(var.region_az_count, var.region)}"
+  vpc_id                  = "${aws_vpc.main.id}"
+  cidr_block              = "${cidrsubnet(aws_vpc.main.cidr_block, 5, count.index * 8 + 6)}"
+  availability_zone       = "${element(data.aws_availability_zones.available.names, count.index)}"
+  count                   = "${lookup(var.region_az_count, var.region)}"
+  map_public_ip_on_launch = false
 
   tags {
     Name = "${var.name}-${format("protected-%02d", count.index+1)}"
   }
 }
+
 
 /**
  * Gateways
