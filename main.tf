@@ -128,6 +128,15 @@ resource "aws_route_table" "private" {
   }
 }
 
+resource "aws_route_table" "protected" {
+  vpc_id = "${aws_vpc.main.id}"
+
+  tags {
+    Name = "${var.name}-protected-01"
+  }
+}
+
+
 
 /**
  * Route associations
@@ -148,7 +157,7 @@ resource "aws_route_table_association" "private" {
 resource "aws_route_table_association" "protected" {
   count          = "${lookup(var.region_az_count, var.region)}"
   subnet_id      = "${element(aws_subnet.protected.*.id, count.index)}"
-  route_table_id = "${aws_route_table.private.id}"
+  route_table_id = "${aws_route_table.protected.id}"
 }
 
 
